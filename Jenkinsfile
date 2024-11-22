@@ -1,6 +1,6 @@
 pipeline {
     environment {
-        registry = "kishorekannan23/react-app"
+        registry = "kishorekannan23/dev"
         registryCredential = 'docker-hub-credentials' // Replace with your Jenkins credentials ID
     }
     agent any
@@ -10,21 +10,16 @@ pipeline {
                 sh './build.sh'
             }
         }
-        stage('Pushing Image to Private Docker Hub') {
+        stage('Pushing Image to Docker Hub') {
             steps {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
                         // Push the image with BUILD_NUMBER tag
-                        sh "docker tag ${registry}:${env.BUILD_NUMBER} ${registry}:prod"
+                        sh "docker tag ${registry}:${env.BUILD_NUMBER} ${registry}:dev"
                         sh "docker push ${registry}:${env.BUILD_NUMBER}"
-                        sh "docker push ${registry}:prod"
+                        sh "docker push ${registry}:dev"
                     }
                 }
-            }
-        }
-        stage('Run Docker Container with Port Binding') {
-            steps {
-                sh './run.sh'
             }
         }
     }
